@@ -104,4 +104,28 @@ OUTPUT_FORMAT(BFDNAME): 设置输出文件使用的BFD格式
   - 必须符合输出文件格式要求比如：a.out格式的文件只允许存在.text、.data、和.bss section名。
   - 而有的格式只允许存在数字名字，那么此时应该用引号将所有名字内的数字组合在一起;
   - 另外，还有一些格式允许任何序列的字符存在于section名字内，此时如果名字内包含特殊字符(比如空格逗号等)，那么需要用引号将其组合在一起
+- $\color{red}{输出section地址(ADDRESS)}$ :
+  - ADDRESS表达式，它的值用于设置VMA
+  - 如果没有 [ADDRESS] 选项且有REGION选项，那么链接器将根据REGION设置VMA
+  - 如果也没有REGION选项，那么链接器将根据定位符号 “.”的值设置该section的VMA，将定位符号的值调整到满足输出section对齐要求后的值
+---
+date：2022-11-09
+---
+### 2.2.2）输入section描述
+- $\color{red}{最常见的输出section描述命令是输入section描述,输入section描述是最基本的链接脚本描述}$
+```javascript
+ FILENAME( EXCLUDE_FILE (FILENAME1 FILENAME2 ...) SECTION1 SECTION2 ...)
+ ```
+ -  - FILENAME:文件名，可以是特定的文件名，也可以是字符串模式
+ -  - SECTION: 名字，可以是一个特定的section名字，也可以是一个字符串模式
+- 示例：
+```javascript
+*(.text) //表示所有输入文件的.text section
+(*(EXCLUDE_FILE (*crtend.o *otherfile.o) .ctors))  //表示除crtend.o otherfile.o文件外的所有输入文件的.ctors section
+data.o(.data)   //表示data.o文件中的.data section
+data.o   //表示data.o文件的所有section
+*(.text .data)  //表示所有文件的.text section和.data section，顺序是第一个文件的.text section 第一个文件的.data section，第二个文件的.text section 第二个文件的.data section
+*(.text) *(.data)  //表示所有文件的.text section和.data section，顺序是所有文件的.text section，所有文件的.data section
+```
+
 
